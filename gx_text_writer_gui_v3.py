@@ -8,7 +8,7 @@ try:
 except ImportError:
     pyautogui=None
 
-TITLE='GX Text Writer V3.1 - Ladder Keys'
+TITLE='GX Text Writer V3 - Ladder Keys'
 DEFAULT_DELAY=280
 DEFAULT_START=3
 
@@ -188,90 +188,11 @@ class App:
     def intval(self,var,default):
         try: return max(0,int(var.get().strip()))
         except: return default
-    def validate_set_rst(self,txt):
-        lines=self.prep(txt.splitlines())
-        seen={'SET':{},'RST':{}}
-        errors=[]
-        for n,line in enumerate(lines,1):
-            m=re.match(r'^\\[APP\\s+(SET|RST)\\s+([^\\]\\s]+)\\]    def pause(self):
-        if not self.running: return
-        self.paused=not self.paused; self.bpause.configure(text='Continuar (F9)' if self.paused else 'Pausar (F9)'); self.status('Pausado.' if self.paused else 'Escribiendo...')
-    def abort(self):
-        if self.running: self.abort_flag=True; self.paused=False; self.status('Abortando...')
-    def buttons(self):
-        r=self.running; self.bstart.configure(state='disabled' if r else 'normal'); self.bpause.configure(state='normal' if r else 'disabled',text='Pausar (F9)'); self.babort.configure(state='normal' if r else 'disabled')
-    def prep(self,lines):
-        out=[]
-        for raw in lines:
-            line=raw.strip()
-            if not line: continue
-            if self.ignore.get() and (line.startswith(';') or line.startswith('//')): continue
-            out.append(line)
-        return out
-    def worker(self,txt,delay,start):
-        try:
-            for sec in range(start,0,-1):
-                if self.abort_flag: return
-                self.status(f'Empieza en {sec}s. Hacé clic en una celda vacía del ladder...'); time.sleep(1)
-            lines=self.prep(txt.splitlines()); total=len(lines); self.pvar.set(f'0 / {total}'); self.status('Escribiendo V3...')
-            for i,line in enumerate(lines,1):
-                if self.abort_flag: self.status('Abortado.'); return
-                while self.paused and not self.abort_flag: time.sleep(.1)
-                self.exec_line(line); self.pvar.set(f'{i} / {total}'); time.sleep(delay/1000)
-            self.status('Escritura terminada.')
-        except Exception as e:
-            self.status('Error.'); messagebox.showerror('Error',str(e))
-        finally:
-            self.running=False; self.paused=False; self.abort_flag=False; self.root.after(0,self.buttons)
-    def paste(self,txt):
-        if self.clip.get():
-            self.root.clipboard_clear(); self.root.clipboard_append(txt); self.root.update(); time.sleep(.05); pyautogui.hotkey('ctrl','v'); time.sleep(.05)
-        else: pyautogui.write(txt)
-    def gx(self,fkey,arg):
-        pyautogui.press(fkey); time.sleep(.10)
-        if arg: self.paste(arg); time.sleep(.05)
-        pyautogui.press('enter'); time.sleep(.10)
-    def exec_line(self,line):
-        if line.startswith('[') and line.endswith(']'): return self.cmd(line[1:-1].strip())
-        self.paste(line); pyautogui.press('enter')
-    def cmd(self,c):
-        for pat,fkey in [(r'^(NO|CONTACT|NA)\s+(.+)$','f5'),(r'^(NC|CONTACT_NC)\s+(.+)$','f6'),(r'^(COIL|OUT)\s+(.+)$','f7'),(r'^(APP|FUNC|INST|FUNCTION)\s+(.+)$','f8')]:
-            m=re.match(pat,c,re.I)
-            if m: return self.gx(fkey,m.group(2).strip())
-        m=re.match(r'^KEY\s+(.+)$',c,re.I)
-        if m: pyautogui.press(m.group(1).strip().lower()); return
-        u=c.upper(); m=re.match(r'^WAIT\s+(\d+)$',u)
-        if m: time.sleep(int(m.group(1))/1000); return
-        keys={'ENTER':'enter','TAB':'tab','UP':'up','DOWN':'down','LEFT':'left','RIGHT':'right','BACKSPACE':'backspace','DELETE':'delete','ESC':'esc','SPACE':'space','HOME':'home','END':'end','F1':'f1','F2':'f2','F3':'f3','F4':'f4','F5':'f5','F6':'f6','F7':'f7','F8':'f8','F9':'f9','F10':'f10','F11':'f11','F12':'f12'}
-        hot={'CTRL+A':('ctrl','a'),'CTRL+C':('ctrl','c'),'CTRL+V':('ctrl','v'),'CTRL+Z':('ctrl','z')}
-        if u in keys: pyautogui.press(keys[u]); return
-        if u in hot: pyautogui.hotkey(*hot[u]); return
-        raise ValueError('Comando no reconocido: ['+c+']')
-
-def main():
-    root=tk.Tk(); App(root); root.mainloop()
-if __name__=='__main__': main()
-,line,re.I)
-            if not m: continue
-            op=m.group(1).upper(); dev=m.group(2).upper()
-            if dev in seen[op]:
-                errors.append(f'{op} {dev}: repetido en líneas ejecutables {seen[op][dev]} y {n}')
-            else:
-                seen[op][dev]=n
-        return errors
-
     def start_write(self):
         if self.running: return
         if pyautogui is None: messagebox.showerror('Falta pyautogui','Ejecutá: python -m pip install pyautogui'); return
         txt=self.text.get('1.0','end-1c')
         if not txt.strip(): messagebox.showwarning('Sin texto','No hay texto.'); return
-        errors=self.validate_set_rst(txt)
-        if errors:
-            msg='GX Writer bloqueó la escritura. Cada dispositivo puede tener como máximo un SET y un RST en todo el programa.\\n\\n'+'\\n'.join(errors[:30])
-            if len(errors)>30: msg+=f'\\n... y {len(errors)-30} errores más.'
-            messagebox.showerror('SET/RST duplicados',msg)
-            self.status('Validación fallida: SET/RST duplicados.')
-            return
         self.running=True; self.paused=False; self.abort_flag=False; self.buttons()
         threading.Thread(target=self.worker,args=(txt,self.intval(self.delay,DEFAULT_DELAY),self.intval(self.start,DEFAULT_START)),daemon=True).start()
     def pause(self):
