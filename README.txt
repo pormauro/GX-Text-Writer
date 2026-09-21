@@ -55,3 +55,29 @@ Para generar EXE:
 - build_exe_v3_1.bat
 
 El programa de la estampadora V2 se genera además con política más estricta: **cero SET y cero RST**, y un único escritor para cada COIL/PLS.
+
+## Comparaciones en [APP] / F8
+
+GX-Text-Writer escribe en el editor Ladder mediante F8. Para comparaciones dentro de [APP], usar la sintaxis que acepta el cuadro de instrucción de GX Works2:
+
+16 bits:
+- [APP = D0 K10]
+- [APP > D0 K10]
+- [APP < D0 K10]
+- [APP <> D0 K10]
+- [APP <= D0 K10]
+- [APP >= D0 K10]
+
+32 bits:
+- [APP D= D128 K0]
+- [APP D> D128 K0]
+- [APP D< D128 D130]
+- [APP D<> D128 D130]
+- [APP D<= D128 D130]
+- [APP D>= D128 D130]
+
+IMPORTANTE:
+- No usar LDD= / LDD> / LDD< dentro de [APP].
+- No usar ANDD= / ANDD> / ANDD< dentro de [APP].
+Esos son mnemónicos de lista/instrucción y no son la sintaxis esperada por el cuadro F8 de Ladder en este flujo.
+
