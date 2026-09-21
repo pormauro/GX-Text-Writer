@@ -34,7 +34,7 @@ Ejemplo inválido:
 - dos o más [APP SET M18] en rungs distintos;
 - dos o más [APP RST M18] en rungs distintos.
 
-GX Text Writer V3 hace una validación previa y bloquea la escritura si detecta SET o RST duplicados para el mismo dispositivo.
+Para evitar que vuelva a ocurrir, usar `gx_text_writer_gui_v3_1.py`: V3.1 valida el archivo antes de escribir y bloquea la ejecución si detecta SET o RST duplicados para el mismo dispositivo. El V3 original se conserva como baseline.
 
 Recomendación de arquitectura:
 - un único escritor por M/Y;
@@ -42,3 +42,16 @@ Recomendación de arquitectura:
 - usar SET/RST sólo cuando realmente haga falta enclavar un bit;
 - nunca resolver varias condiciones escribiendo el mismo SET/RST desde rungs diferentes.
 
+
+
+## V3.1 recomendada
+
+Ejecutar:
+
+- python gx_text_writer_gui_v3_1.py
+
+Para generar EXE:
+
+- build_exe_v3_1.bat
+
+El programa de la estampadora V2 se genera además con política más estricta: **cero SET y cero RST**, y un único escritor para cada COIL/PLS.
