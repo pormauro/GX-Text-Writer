@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0",
+  "project": {
+    "name": "Estampadora",
+    "group": "Estampadora",
+    "target": "mView",
+    "resolution": {
+      "width": 480,
+      "height": 272
+    },
+    "notes": "Ejemplo reducido. El spec completo se generará desde PLC + documentación."
+  },
+  "tags": [
+    {
+      "name": "STATE",
+      "address": "D0",
+      "data_type": "WORD",
+      "access": "RO",
+      "comment": "Estado principal"
+    },
+    {
+      "name": "FAULT_CODE",
+      "address": "D2",
+      "data_type": "WORD",
+      "access": "RO",
+      "comment": "Código de falla"
+    },
+    {
+      "name": "HMI_NEW_LOT",
+      "address": "M103",
+      "data_type": "BIT",
+      "access": "WO_PULSE",
+      "comment": "Nuevo lote",
+      "safety": {
+        "direct_output_write_forbidden": true,
+        "requires_auth": false,
+        "momentary": true
+      }
+    }
+  ],
+  "scenes": [
+    {
+      "id": "P00",
+      "name": "ESTADO",
+      "access": "operator",
+      "objects": [
+        {
+          "id": "title",
+          "kind": "text",
+          "rect": [10, 5, 160, 32],
+          "text": "ESTADO"
+        },
+        {
+          "id": "state",
+          "kind": "numeric_display",
+          "rect": [90, 40, 165, 68],
+          "tag": "STATE",
+          "format": "###"
+        },
+        {
+          "id": "menu",
+          "kind": "scene_button",
+          "rect": [390, 5, 470, 42],
+          "text": "MENU",
+          "target_scene": "P01"
+        }
+      ]
+    },
+    {
+      "id": "P01",
+      "name": "MENU",
+      "access": "operator",
+      "objects": []
+    }
+  ]
+}
