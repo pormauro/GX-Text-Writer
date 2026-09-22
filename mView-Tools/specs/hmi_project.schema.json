@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/pormauro/GX-Text-Writer.mView-Tools/mView-Tools/specs/hmi_project.schema.json",
+  "title": "mView HMI Project Spec",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "project", "tags", "scenes"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "project": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "group"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "group": {"type": "string", "minLength": 1},
+        "target": {"type": "string", "default": "mView"},
+        "resolution": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["width", "height"],
+          "properties": {
+            "width": {"type": "integer", "minimum": 1},
+            "height": {"type": "integer", "minimum": 1}
+          }
+        },
+        "notes": {"type": "string"}
+      }
+    },
+    "tags": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/tag"}
+    },
+    "scenes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/scene"}
+    }
+  },
+  "$defs": {
+    "tag": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "address"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "address": {"type": "string", "minLength": 1},
+        "data_type": {
+          "type": "string",
+          "enum": ["BIT", "WORD", "DINT32", "UINT32", "FLOAT", "TEXT"]
+        },
+        "access": {
+          "type": "string",
+          "enum": ["RO", "RW", "WO_PULSE", "RW_TECH"]
+        },
+        "comment": {"type": "string"},
+        "minimum": {"type": ["number", "string", "null"]},
+        "maximum": {"type": ["number", "string", "null"]},
+        "safety": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "direct_output_write_forbidden": {"type": "boolean"},
+            "requires_auth": {"type": "boolean"},
+            "momentary": {"type": "boolean"}
+          }
+        }
+      }
+    },
+    "scene": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "objects"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "name": {"type": "string", "minLength": 1},
+        "access": {"type": "string"},
+        "objects": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/object"}
+        }
+      }
+    },
+    "object": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "rect"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "kind": {
+          "type": "string",
+          "enum": [
+            "text",
+            "numeric_display",
+            "numeric_input",
+            "bit_indicator",
+            "command_button",
+            "scene_button"
+          ]
+        },
+        "rect": {
+          "type": "array",
+          "prefixItems": [
+            {"type": "integer"},
+            {"type": "integer"},
+            {"type": "integer"},
+            {"type": "integer"}
+          ],
+          "minItems": 4,
+          "maxItems": 4
+        },
+        "text": {"type": "string"},
+        "tag": {"type": "string"},
+        "target_scene": {"type": "string"},
+        "format": {"type": "string"},
+        "minimum": {"type": ["number", "string", "null"]},
+        "maximum": {"type": ["number", "string", "null"]},
+        "visible_when": {"type": "string"},
+        "enabled_when": {"type": "string"},
+        "style": {"type": "object"}
+      }
+    }
+  }
+}
