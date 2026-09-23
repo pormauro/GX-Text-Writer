@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gxw-tools-depros"
+version = "0.1.0"
+description = "Independent GX Works2 GXW ordinary-Ladder reader/writer tooling"
+requires-python = ">=3.10"
+authors = [{name = "DEPROS"}]
+
+[project.scripts]
+gxw-tool = "gxw_tools.cli:main"
+
+[tool.setuptools]
+packages = ["gxw_tools"]
