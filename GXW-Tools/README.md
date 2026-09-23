@@ -20,6 +20,7 @@ Soporta en la baseline actual:
 - Recompilación desde la sintaxis bracket soportada.
 - Escritura conservadora: actualiza `Program.pou`, las dos copias verificadas del token stream en `.res`, tamaño+MD5 en `history.xml`, reconstruye ambos CFB y vuelve a validar todo.
 - Lectura/escritura de la tabla de nombres por dispositivo de esta baseline (`COMMENT.qcd`, Device Comments): 133 registros/17 rangos, X/Y octal, M/D y T200+, UTF-16LE y tamaño variable.
+- Auditoría cruzada de dispositivos: detecta lecturas internas sin escritor Ladder y bobinas con múltiples programas escritores; admite whitelist de dispositivos escritos externamente por HMI/SCADA.
 
 ## Límite de seguridad
 
@@ -32,6 +33,7 @@ Después de modificar un programa se debe abrir la copia generada en GX Works2 y
 ```powershell
 python -m gxw_tools info estampadora.gxw
 python -m gxw_tools validate estampadora.gxw
+python -m gxw_tools audit-devices estampadora.gxw --external M100 --external M101
 python -m gxw_tools list estampadora.gxw
 python -m gxw_tools export estampadora.gxw AUTO -o AUTO.gxtext.txt
 python -m gxw_tools export-all estampadora.gxw decoded
@@ -56,3 +58,10 @@ Este enfoque reduce el riesgo de depender de offsets físicos del archivo origin
 ## Labels / Device Comments
 
 En la baseline de la estampadora, los nombres `B1`, `STATE`, `EV1_P1`, etc. están serializados en `COMMENT.qcd` como **Device Comments**. Los verdaderos Global/Local Labels (`Global1.gh`, `*.Labels.lh`) están vacíos. Ver [`FORMAT_LABELS.md`](FORMAT_LABELS.md) para el formato binario, mapeo de dispositivos y pruebas de round-trip.
+
+
+## Auditoría de dependencias
+
+`audit-devices` recorre todos los programas Ladder decodificados y cruza lectores/escritores. Está pensado para detectar errores estructurales antes de escribir un GXW, por ejemplo un contacto `M70` usado sin ninguna bobina/escritura o una salida con más de un programa escritor.
+
+Los dispositivos que deliberadamente son escritos desde HMI/SCADA se declaran con `--external` para evitar falsos positivos. La auditoría es complementaria a `validate`: no sustituye **Check Program / Convert / Compile** de GX Works2.
