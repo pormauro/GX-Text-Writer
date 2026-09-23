@@ -1,0 +1,26 @@
+[APP = D24 K1]
+[COIL Y0]
+
+[APP = D25 K1]
+[COIL Y1]
+
+[APP = D26 K1]
+[COIL Y2]
+
+[APP = D27 K1]
+[COIL Y3]
+
+[APP = D28 K1]
+[COIL Y4]
+
+[APP = D20 K1]
+[COIL Y5]
+
+[APP = D21 K1]
+[COIL Y6]
+
+[APP = D22 K1]
+[COIL Y7]
+
+[APP = D23 K1]
+[COIL Y10]
