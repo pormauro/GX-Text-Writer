@@ -8,6 +8,7 @@ import sys
 
 from .project import GXWProject, GXWError
 from .ladder import LadderError
+from .audit import audit_project_devices
 
 
 def _write(path: str | Path, data: bytes | str) -> None:
@@ -130,6 +131,14 @@ def cmd_replace_labels(args) -> int:
     return 0
 
 
+
+def cmd_audit_devices(args) -> int:
+    p = GXWProject(args.gxw)
+    report = audit_project_devices(p, external_devices=args.external)
+    print(json.dumps(report, ensure_ascii=False, indent=2))
+    return 0 if report["ok"] else 3
+
+
 def build_parser() -> argparse.ArgumentParser:
     ap = argparse.ArgumentParser(
         prog="gxw-tool",
@@ -183,6 +192,17 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("csv", help="CSV with DISPOSITIVO and LABEL columns; Estampadora canonical CSV is accepted")
     p.add_argument("-o", "--output", required=True)
     p.set_defaults(func=cmd_replace_labels)
+
+
+    p = sub.add_parser("audit-devices", help="audit device reads/writers across all Ladder programs")
+    p.add_argument("gxw")
+    p.add_argument(
+        "--external",
+        action="append",
+        default=[],
+        help="device intentionally written outside Ladder (repeatable), e.g. --external M100",
+    )
+    p.set_defaults(func=cmd_audit_devices)
 
     return ap
 
