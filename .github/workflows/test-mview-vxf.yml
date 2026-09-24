@@ -1,0 +1,28 @@
+name: Test mView VXF writer
+
+on:
+  push:
+    paths:
+      - "mView-Tools/vxf-editor/**"
+      - ".github/workflows/test-mview-vxf.yml"
+  pull_request:
+    paths:
+      - "mView-Tools/vxf-editor/**"
+      - ".github/workflows/test-mview-vxf.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Run VXF regression tests
+        run: python -m unittest mView-Tools/vxf-editor/test_vxf.py
