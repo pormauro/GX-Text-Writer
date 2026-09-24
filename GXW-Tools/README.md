@@ -65,3 +65,18 @@ En la baseline de la estampadora, los nombres `B1`, `STATE`, `EV1_P1`, etc. est�
 `audit-devices` recorre todos los programas Ladder decodificados y cruza lectores/escritores. Está pensado para detectar errores estructurales antes de escribir un GXW, por ejemplo un contacto `M70` usado sin ninguna bobina/escritura o una salida con más de un programa escritor.
 
 Los dispositivos que deliberadamente son escritos desde HMI/SCADA se declaran con `--external` para evitar falsos positivos. La auditoría es complementaria a `validate`: no sustituye **Check Program / Convert / Compile** de GX Works2.
+
+
+## GX Works2 — cierre automático de Write to PLC
+
+El checkbox `When processing ends, close this window automatically` pertenece a la UI de GX Works2 y, en la baseline verificada de la estampadora, **no modifica el archivo .gxw**. El GXW probado antes/después fue byte-idéntico.
+
+Para automatizar esa preferencia sin contaminar el formato de proyecto:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\GXW-Tools\scripts\gxworks2_write_autoclose.ps1
+```
+
+El helper espera el diálogo `Write to PLC` y activa únicamente ese checkbox mediante Windows UI Automation. No ejecuta la transferencia ni pulsa confirmaciones.
+
+Ver [GXWORKS2_TRANSFER_AUTOCLOSE.md](GXWORKS2_TRANSFER_AUTOCLOSE.md).
