@@ -4,7 +4,7 @@ Repositorio de herramientas para automatizar el flujo Mitsubishi/Coolmay desde u
 
 - **GX-Text-Writer/**: escritura asistida de Ladder en GX Works2/3.
 - **GXW-Tools/**: lectura, auditoría, modificación y round-trip de proyectos GX Works2 `.gxw` (Ladder ordinario y Device Comments/tabla de nombres por dispositivo).
-- **mView-Tools/**: generación, lectura y validación de archivos de HMI mView.
+- **mView-Tools/**: generación, lectura, modificación y validación de archivos de HMI mView (`.tag`, `.sca` y `.vxf`).
 
 ## Objetivo
 
@@ -22,7 +22,7 @@ documentación / requisitos
                ↓                           ↓
       GX-Text-Writer / GXW-Tools     mView-Tools
                ↓                           ↓
-         proyecto .gxw                .tag / .sca
+         proyecto .gxw          .tag / .sca / .vxf
                ↓                           ↓
       validación / round-trip       validación binaria
                ↓                           ↓
@@ -49,9 +49,20 @@ La baseline de la estampadora permitió cerrar offline el flujo:
 
 La tabla que el proyecto usa como nombres legibles de dispositivos (`B1`, `STATE`, `EV1_P1`, etc.) está en `COMMENT.qcd` como **Device Comments**. Los verdaderos Global/Local Labels (`Global1.gh`, `*.Labels.lh`) son otra estructura y están vacíos en esta baseline.
 
+## VXF
+
+Los proyectos completos de mView usan un contenedor `vxpm + zlib`. Las
+mutaciones de escenas deben reconstruir también el bloque superior
+`0x10000004` (size + CRC16/MODBUS). No hacerlo puede disparar el mensaje
+engañoso de mView `HMI models are not supported, can't open!`.
+
+La rutina segura está en `mView-Tools/vxf-editor/vxf_core.py`.
+
 Ver:
 
 - [`GXW-Tools/README.md`](GXW-Tools/README.md)
 - [`GXW-Tools/FORMAT_LABELS.md`](GXW-Tools/FORMAT_LABELS.md)
 - [`mView-Tools/README.md`](mView-Tools/README.md)
+- [`mView-Tools/vxf-editor/README.md`](mView-Tools/vxf-editor/README.md)
+- [`mView-Tools/vxf-editor/FORMAT_VXF.md`](mView-Tools/vxf-editor/FORMAT_VXF.md)
 - [`mView-Tools/AI_ARCHITECTURE.md`](mView-Tools/AI_ARCHITECTURE.md)
